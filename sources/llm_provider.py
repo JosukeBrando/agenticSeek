@@ -31,6 +31,7 @@ except ModuleNotFoundError:  # pragma: no cover - optional dependency
 
 from sources.logger import Logger
 from sources.utility import pretty_print, animate_thinking
+from sources.cache import Cache
 
 class Provider:
     def __init__(self, provider_name, model, server_address="127.0.0.1:5000", is_local=False):
@@ -54,6 +55,7 @@ class Provider:
         }
         self.logger = Logger("provider.log")
         self.api_key = None
+        self.cache = Cache()
         self.unsafe_providers = ["openai", "deepseek", "dsk_deepseek", "together", "google", "openrouter"]
         if self.provider_name not in self.available_providers:
             raise ValueError(f"Unknown provider: {provider_name}")
@@ -81,6 +83,19 @@ class Provider:
         """
         llm = self.available_providers[self.provider_name]
         self.logger.info(f"Using provider: {self.provider_name} at {self.server_ip}")
+
+        last_user_message = ""
+        for msg in reversed(history):
+            if msg.get("role") == "user":
+                last_user_message = msg.get("content", "")
+                break
+
+        if last_user_message and self.cache.is_cached(last_user_message):
+            cached = self.cache.get_cached_response(last_user_message)
+            if verbose and cached:
+                print(cached)
+            return cached
+
         try:
             thought = llm(history, verbose)
         except KeyboardInterrupt:
@@ -99,6 +114,7 @@ class Provider:
             if "refused" in str(e):
                 return f"Server {self.server_ip} seem offline. Unable to answer."
             raise Exception(f"Provider {self.provider_name} failed: {str(e)}") from e
+        self.cache.add_message_pair(last_user_message, thought)
         return thought
 
     def is_ip_online(self, address: str, timeout: int = 10) -> bool:

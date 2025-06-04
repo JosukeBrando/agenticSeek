@@ -12,7 +12,12 @@ class Cache:
                 json.dump([], f)
 
         with open(self.cache_file, 'r') as f:
-            self.cache = set(json.load(f))
+            try:
+                self.cache = json.load(f)
+                if not isinstance(self.cache, list):
+                    self.cache = []
+            except json.JSONDecodeError:
+                self.cache = []
 
     def add_message_pair(self, user_message: str, assistant_message: str):
         """Add a user/assistant pair to the cache if not present."""
