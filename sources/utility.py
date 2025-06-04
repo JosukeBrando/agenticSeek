@@ -1,6 +1,17 @@
 
-from colorama import Fore
-from termcolor import colored
+try:
+    from colorama import Fore
+except ModuleNotFoundError:  # pragma: no cover - optional dependency
+    class _Fore:
+        BLACK = RED = GREEN = YELLOW = BLUE = MAGENTA = CYAN = WHITE = RESET = ""
+
+    Fore = _Fore()
+
+try:
+    from termcolor import colored
+except ModuleNotFoundError:  # pragma: no cover - optional dependency
+    def colored(text, color=None, attrs=None):
+        return text
 import platform
 import threading
 import itertools
