@@ -111,7 +111,12 @@ class Agent():
     
     def load_prompt(self, file_path: str) -> str:
         try:
-            with open(file_path, 'r', encoding="utf-8") as f:
+            if not os.path.isabs(file_path):
+                base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                alt_path = os.path.normpath(os.path.join(base_dir, file_path))
+                if os.path.exists(alt_path):
+                    file_path = alt_path
+            with open(file_path, "r", encoding="utf-8") as f:
                 return f.read()
         except FileNotFoundError:
             raise FileNotFoundError(f"Prompt file not found at path: {file_path}")

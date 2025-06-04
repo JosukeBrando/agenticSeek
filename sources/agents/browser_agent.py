@@ -1,3 +1,4 @@
+import os
 import re
 import time
 from datetime import date
@@ -8,7 +9,10 @@ import asyncio
 from sources.utility import pretty_print, animate_thinking
 from sources.agents.agent import Agent
 from sources.tools.searxSearch import searxSearch
-from sources.browser import Browser
+try:
+    from sources.browser import Browser  # type: ignore
+except ModuleNotFoundError:  # pragma: no cover - optional dependency
+    Browser = None  # type: ignore
 from sources.logger import Logger
 from sources.memory import Memory
 
@@ -25,8 +29,9 @@ class BrowserAgent(Agent):
         The Browser agent is an agent that navigate the web autonomously in search of answer
         """
         super().__init__(name, prompt_path, provider, verbose, browser)
+        default_search_url = os.getenv("SEARXNG_BASE_URL", "http://127.0.0.1:8080")
         self.tools = {
-            "web_search": searxSearch(),
+            "web_search": searxSearch(base_url=default_search_url),
         }
         self.role = "web"
         self.type = "browser_agent"
@@ -38,10 +43,13 @@ class BrowserAgent(Agent):
         self.notes = []
         self.date = self.get_today_date()
         self.logger = Logger("browser_agent.log")
-        self.memory = Memory(self.load_prompt(prompt_path),
-                        recover_last_session=False, # session recovery in handled by the interaction class
-                        memory_compression=False,
-                        model_provider=provider.get_model_name())
+        model_name = provider.get_model_name() if provider else "unknown"
+        self.memory = Memory(
+            self.load_prompt(prompt_path),
+            recover_last_session=False,  # session recovery in handled by the interaction class
+            memory_compression=False,
+            model_provider=model_name,
+        )
     
     def get_today_date(self) -> str:
         """Get the date"""

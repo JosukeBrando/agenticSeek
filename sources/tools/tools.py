@@ -40,15 +40,16 @@ class Tools():
         self.logger = Logger("tools.log")
         self.config = configparser.ConfigParser()
         self.work_dir = self.create_work_dir()
-        self.excutable_blocks_found = False
+        self.executable_blocks_found_flag = False
         self.safe_mode = True
         self.allow_language_exec_bash = False
     
     def get_work_dir(self):
         return self.work_dir
     
-    def set_allow_language_exec_bash(value: bool) -> None:
-        self.allow_language_exec_bash = value 
+    def set_allow_language_exec_bash(self, value: bool) -> None:
+        """Allow execution of bash code blocks."""
+        self.allow_language_exec_bash = value
     
     def check_config_dir_validity(self):
         """Check if the config directory is valid."""
@@ -130,8 +131,9 @@ class Tools():
         if directory and not os.path.exists(directory):
             self.logger.info(f"Creating directory {directory}")
             os.makedirs(directory)
-        for block in blocks:
-            with open(os.path.join(directory, save_path_file), 'w') as f:
+        file_path = os.path.join(directory, save_path_file)
+        with open(file_path, 'w') as f:
+            for block in blocks:
                 f.write(block)
     
     def get_parameter_value(self, block: str, parameter_name: str) -> str:
@@ -153,8 +155,8 @@ class Tools():
         """
         Check if executable blocks were found.
         """
-        tmp = self.excutable_blocks_found
-        self.excutable_blocks_found = False
+        tmp = self.executable_blocks_found_flag
+        self.executable_blocks_found_flag = False
         return tmp
 
     def load_exec_block(self, llm_text: str) -> tuple[list[str], str | None]:
@@ -203,7 +205,7 @@ class Tools():
             if ':' in content.split('\n')[0]:
                 save_path = content.split('\n')[0].split(':')[1]
                 content = content[content.find('\n')+1:]
-            self.excutable_blocks_found = True
+            self.executable_blocks_found_flag = True
             code_blocks.append(content)
             start_index = end_pos + len(end_tag)
         self.logger.info(f"Found {len(code_blocks)} blocks to execute")
