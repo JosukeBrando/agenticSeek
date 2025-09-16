@@ -10,6 +10,32 @@
 
 [![Visit AgenticSeek](https://img.shields.io/static/v1?label=Website&message=AgenticSeek&color=blue&style=flat-square)](https://fosowl.github.io/agenticSeek.html) ![License](https://img.shields.io/badge/license-GPL--3.0-green) [![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)](https://discord.gg/8hGDaME3TC) [![Twitter](https://img.shields.io/twitter/url/https/twitter.com/fosowl.svg?style=social&label=Update%20%40Fosowl)](https://x.com/Martin993886460) [![GitHub stars](https://img.shields.io/github/stars/Fosowl/agenticSeek?style=social)](https://github.com/Fosowl/agenticSeek/stargazers)
 
+## AgenticSeek Racing Lab
+
+The repository now ships with the AgenticSeek Racing Lab, a physics-driven driving sandbox built on [Three.js](https://threejs.org/). Use it to prototype novel racing policies and evaluate training loops on increasingly complex circuits.
+
+### Highlights
+
+- ⚙️ Lightweight vehicle dynamics model with throttle/brake/steering, surface drag, and off-track penalties.
+- 🏁 Three handcrafted tracks (Training Oval, Switchback Sprint, Spiral Gauntlet) that ramp up technical difficulty.
+- 📊 Real-time HUD telemetry for lap timing, checkpoint progress, and off-track status.
+- 🎮 Instant switching between manual keyboard control and programmatic agents.
+
+### Getting started
+
+1. Open `game/index.html` in a modern browser (Chrome or Firefox recommended).
+2. Use `W`/`A`/`S`/`D` or arrow keys to drive, `Space` to brake, `R` to reset, and `N`/`P` to cycle tracks.
+3. Toggle the follow/overview camera with `C` and watch lap times in the on-screen HUD.
+
+### AI experimentation hooks
+
+- Toggle scripted control with `window.racingSim.useExternalControls()` or revert to manual via `window.racingSim.useManualControls()`.
+- Drive the car with `window.racingSim.setControlInput({ throttle, steer, brake })` where `throttle`/`steer` are in `[-1, 1]` and `brake` in `[0, 1]`.
+- Inspect the simulation state through `window.racingSim.getState()` for telemetry, lap timing, and off-track metrics.
+- Query available tracks with `window.racingSim.getLevels()` and load one using `window.racingSim.loadLevel(index)`.
+
+Use this sandbox to benchmark reinforcement learning strategies, motion planners, or heuristic controllers against a repeatable suite of racing challenges.
+
 ### Why AgenticSeek ?
 
 * 🔒 Fully Local & Private - Everything runs on your machine — no cloud, no data sharing. Your files, conversations, and searches stay private.
