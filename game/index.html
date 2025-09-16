@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgenticSeek Racing Lab</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: radial-gradient(circle at top, #151b28 0%, #090b12 60%, #040507 100%);
+      color: #f5f7fb;
+    }
+
+    canvas {
+      display: block;
+    }
+
+    #hud {
+      position: absolute;
+      top: 0;
+      left: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: min(420px, 90vw);
+      pointer-events: none;
+    }
+
+    #title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #9dd5ff;
+      text-shadow: 0 0 12px rgba(82, 191, 255, 0.35);
+    }
+
+    .panel {
+      background: rgba(10, 15, 25, 0.75);
+      border: 1px solid rgba(90, 140, 255, 0.25);
+      border-radius: 12px;
+      padding: 14px 16px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+      pointer-events: auto;
+    }
+
+    #telemetry {
+      line-height: 1.5;
+      font-size: 0.95rem;
+      color: #e8ebf4;
+    }
+
+    #telemetry strong {
+      color: #a8d1ff;
+    }
+
+    #lapFlash {
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: #ffe8a0;
+      text-shadow: 0 0 18px rgba(255, 208, 85, 0.6);
+    }
+
+    #lapFlash.visible {
+      opacity: 1;
+    }
+
+    #instructions {
+      font-size: 0.9rem;
+      line-height: 1.55;
+      color: #c3c8d8;
+    }
+
+    #instructions ul {
+      margin: 0.35rem 0 0.55rem 1.2rem;
+      padding: 0;
+    }
+
+    #instructions li {
+      margin-bottom: 0.25rem;
+    }
+
+    code {
+      font-family: "JetBrains Mono", "Fira Code", monospace;
+      background: rgba(157, 213, 255, 0.1);
+      padding: 0.05rem 0.35rem;
+      border-radius: 6px;
+      color: #9dd5ff;
+    }
+
+    @media (max-width: 640px) {
+      #hud {
+        padding: 12px;
+        gap: 10px;
+      }
+
+      #title {
+        font-size: 1.2rem;
+      }
+
+      .panel {
+        padding: 12px;
+      }
+
+      #telemetry {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="hud">
+    <div id="title">AgenticSeek Racing Lab</div>
+    <div id="telemetry" class="panel"></div>
+    <div id="lapFlash" class="panel"></div>
+    <div id="instructions" class="panel"></div>
+  </div>
+  <script src="https://unpkg.com/three@0.155/build/three.min.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
