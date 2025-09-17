@@ -1,130 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AgenticSeek Racing Lab</title>
-  <style>
-    :root {
-      color-scheme: dark;
-      font-family: "Inter", "Segoe UI", system-ui, sans-serif;
-    }
-
-    body {
-      margin: 0;
-      overflow: hidden;
-      background: radial-gradient(circle at top, #151b28 0%, #090b12 60%, #040507 100%);
-      color: #f5f7fb;
-    }
-
-    canvas {
-      display: block;
-    }
-
-    #hud {
-      position: absolute;
-      top: 0;
-      left: 0;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      max-width: min(420px, 90vw);
-      pointer-events: none;
-    }
-
-    #title {
-      font-size: 1.4rem;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: #9dd5ff;
-      text-shadow: 0 0 12px rgba(82, 191, 255, 0.35);
-    }
-
-    .panel {
-      background: rgba(10, 15, 25, 0.75);
-      border: 1px solid rgba(90, 140, 255, 0.25);
-      border-radius: 12px;
-      padding: 14px 16px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
-      pointer-events: auto;
-    }
-
-    #telemetry {
-      line-height: 1.5;
-      font-size: 0.95rem;
-      color: #e8ebf4;
-    }
-
-    #telemetry strong {
-      color: #a8d1ff;
-    }
-
-    #lapFlash {
-      opacity: 0;
-      transition: opacity 0.4s ease;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-      color: #ffe8a0;
-      text-shadow: 0 0 18px rgba(255, 208, 85, 0.6);
-    }
-
-    #lapFlash.visible {
-      opacity: 1;
-    }
-
-    #instructions {
-      font-size: 0.9rem;
-      line-height: 1.55;
-      color: #c3c8d8;
-    }
-
-    #instructions ul {
-      margin: 0.35rem 0 0.55rem 1.2rem;
-      padding: 0;
-    }
-
-    #instructions li {
-      margin-bottom: 0.25rem;
-    }
-
-    code {
-      font-family: "JetBrains Mono", "Fira Code", monospace;
-      background: rgba(157, 213, 255, 0.1);
-      padding: 0.05rem 0.35rem;
-      border-radius: 6px;
-      color: #9dd5ff;
-    }
-
-    @media (max-width: 640px) {
-      #hud {
-        padding: 12px;
-        gap: 10px;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AgenticSeek Three.js Playground</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: "Inter", "Segoe UI", system-ui, sans-serif;
       }
 
-      #title {
-        font-size: 1.2rem;
+      body {
+        margin: 0;
+        overflow: hidden;
+        background: radial-gradient(circle at top, #0b1221 0%, #05070e 55%, #020309 100%);
+        color: #f3f6ff;
       }
 
-      .panel {
-        padding: 12px;
+      #gameCanvas {
+        width: 100vw;
+        height: 100vh;
+        display: block;
       }
 
-      #telemetry {
-        font-size: 0.9rem;
+      #overlay {
+        position: fixed;
+        top: 24px;
+        left: 24px;
+        right: 24px;
+        max-width: 420px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 18px 20px;
+        background: linear-gradient(160deg, rgba(12, 20, 36, 0.82), rgba(7, 12, 24, 0.72));
+        border: 1px solid rgba(109, 173, 255, 0.32);
+        border-radius: 14px;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+        pointer-events: none;
       }
-    }
-  </style>
-</head>
-<body>
-  <div id="hud">
-    <div id="title">AgenticSeek Racing Lab</div>
-    <div id="telemetry" class="panel"></div>
-    <div id="lapFlash" class="panel"></div>
-    <div id="instructions" class="panel"></div>
-  </div>
-  <script src="https://unpkg.com/three@0.155/build/three.min.js"></script>
-  <script src="game.js"></script>
-</body>
+
+      #overlay h1 {
+        font-size: 1.35rem;
+        margin: 0;
+        color: #8ecaff;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      #stats,
+      #viewMode {
+        font-size: 0.95rem;
+        letter-spacing: 0.01em;
+        color: #dbe6ff;
+      }
+
+      #message {
+        min-height: 1.1rem;
+        font-size: 0.95rem;
+        color: #ffe5a5;
+      }
+
+      #instructions {
+        font-size: 0.88rem;
+        line-height: 1.55;
+        color: #c5d4f7;
+      }
+
+      #instructions strong {
+        color: #9dd5ff;
+      }
+
+      @media (max-width: 640px) {
+        #overlay {
+          top: 12px;
+          left: 12px;
+          right: 12px;
+          padding: 16px;
+          gap: 10px;
+        }
+
+        #overlay h1 {
+          font-size: 1.15rem;
+        }
+
+        #stats,
+        #viewMode {
+          font-size: 0.88rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="gameCanvas"></canvas>
+    <div id="overlay">
+      <h1>AgenticSeek Three.js Playground</h1>
+      <div id="stats">
+        Time <span id="timeValue">0.0</span>s • Shards <span id="scoreValue">0</span>/<span id="totalValue">0</span>
+      </div>
+      <div id="viewMode">View: <span id="viewLabel">Chase</span></div>
+      <div id="message"></div>
+      <div id="instructions">
+        <p><strong>Move</strong> with WASD or the arrow keys. Hold <strong>Shift</strong> to boost and tap <strong>Space</strong> to brake.</p>
+        <p><strong>Press V</strong> to toggle between the 3D chase camera and the top-down tactical view. Hit <strong>R</strong> to respawn collectibles.</p>
+      </div>
+    </div>
+    <script src="https://unpkg.com/three@0.159.0/build/three.min.js"></script>
+    <script src="game.js"></script>
+  </body>
 </html>

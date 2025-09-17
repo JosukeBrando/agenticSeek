@@ -10,48 +10,33 @@
 
 [![Visit AgenticSeek](https://img.shields.io/static/v1?label=Website&message=AgenticSeek&color=blue&style=flat-square)](https://fosowl.github.io/agenticSeek.html) ![License](https://img.shields.io/badge/license-GPL--3.0-green) [![Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)](https://discord.gg/8hGDaME3TC) [![Twitter](https://img.shields.io/twitter/url/https/twitter.com/fosowl.svg?style=social&label=Update%20%40Fosowl)](https://x.com/Martin993886460) [![GitHub stars](https://img.shields.io/github/stars/Fosowl/agenticSeek?style=social)](https://github.com/Fosowl/agenticSeek/stargazers)
 
-## AgenticSeek Racing Lab
+## AgenticSeek Three.js Playground
 
-The repository now ships with the AgenticSeek Racing Lab, a physics-driven driving sandbox built on [Three.js](https://threejs.org/). Use it to prototype novel racing policies and evaluate training loops on increasingly complex circuits.
+The repository now ships with the AgenticSeek Three.js Playground, a compact game prototype that showcases a hybrid 2D/3D camera workflow. It is designed to be a friendly starting point for experimenting with physics-lite movement, collectible objectives, and scene composition directly in the browser.
 
 ### Highlights
 
-- ⚙️ Lightweight vehicle dynamics model with throttle/brake/steering, surface drag, and off-track penalties.
-- 🏁 Three handcrafted tracks (Training Oval, Switchback Sprint, Spiral Gauntlet) that ramp up technical difficulty.
-- 📊 Real-time HUD telemetry for lap timing, checkpoint progress, and off-track status.
-- 🎮 Instant switching between manual keyboard control and programmatic agents.
+- 🌌 Fully Three.js powered rendering with dynamic lighting, postured for quick iteration on shaders, level art, or mechanics.
+- 🔄 Instant switching between a cinematic third-person chase view and a top-down tactical view to explore 2D/3D gameplay ideas.
+- 🧭 Responsive player controls with momentum, damping, and boundary checks so you can focus on interaction design instead of boilerplate setup.
+- 💠 Procedurally scattered "energy shards" that respawn on demand, making it easy to prototype scoring systems and progression loops.
 
 ### Getting started
 
 1. Open `game/index.html` in a modern browser (Chrome or Firefox recommended).
-2. Use `W`/`A`/`S`/`D` or arrow keys to drive, `Space` to brake, `R` to reset, and `N`/`P` to cycle tracks.
-3. Toggle the follow/overview camera with `C` and watch lap times in the on-screen HUD.
+2. Use `W`/`A`/`S`/`D` or the arrow keys to glide across the platform. Hold `Shift` for a short speed boost and tap `Space` to quickly brake.
+3. Press `V` to toggle between the third-person and top-down cameras, and `R` to respawn collectibles if you want another run.
 
-### AI experimentation hooks
+### Scripting hooks
 
-- Toggle scripted control with `window.racingSim.useExternalControls()` or revert to manual via `window.racingSim.useManualControls()`.
-- Drive the car with `window.racingSim.setControlInput({ throttle, steer, brake })` where `throttle`/`steer` are in `[-1, 1]` and `brake` in `[0, 1]`.
-- Inspect the simulation state through `window.racingSim.getState()` for telemetry, lap timing, and off-track metrics.
-- Query available tracks with `window.racingSim.getLevels()` and load one using `window.racingSim.loadLevel(index)`.
-- Kick off reinforcement-learning friendly episodes with `window.racingSim.startEpisode({ levelIndex, stepDuration, headless })` which freezes the realtime loop for deterministic stepping.
-- Advance the environment with `window.racingSim.stepEpisode(action)` to receive `{ observation, reward, done, info }` tuples, and finish runs via `window.racingSim.endEpisode()`.
-- Retrieve normalized feature vectors at any time through `window.racingSim.getObservation()` and monitor rewards/progress with `window.racingSim.getTrainingState()`.
-- Review the default reward/termination weights by calling `window.racingSim.getTrainingDefaults()` to tailor custom curricula.
+The playground exposes a tiny API on `window.playgroundSim` so you can plug in custom logic, UI, or training loops without modifying the core script:
 
-```js
-// Minimal synchronous training loop example
-const obs0 = window.racingSim.startEpisode({ headless: true });
-let done = false;
-while (!done) {
-  const action = { throttle: Math.random() * 2 - 1, steer: Math.random() * 2 - 1, brake: 0 };
-  const step = window.racingSim.stepEpisode(action, { render: false, skipHUD: true });
-  done = step.done;
-}
-const summary = window.racingSim.endEpisode();
-console.log('Episode reward:', summary.cumulativeReward);
-```
+- `window.playgroundSim.getState()` returns the current player pose, velocity, collected count, elapsed time, and active view.
+- `window.playgroundSim.reset()` recenters the player and scatters a fresh batch of collectibles.
+- `window.playgroundSim.toggleView(mode)` switches between the built-in `"chase"` and `"orthographic"` cameras, or accepts `"auto"` to cycle modes.
+- `window.playgroundSim.spawnCollectibles(count)` re-populates the arena with a specific number of shards.
 
-Use this sandbox to benchmark reinforcement learning strategies, motion planners, or heuristic controllers against a repeatable suite of racing challenges.
+Use these helpers to wire in your own UI overlays, automate playtests, or experiment with reinforcement learning agents that reason over both 2D and 3D perspectives.
 
 ### Why AgenticSeek ?
 
